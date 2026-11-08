@@ -1,0 +1,10 @@
+.env
+cookies.json
+tokens.json
+ledger.db
+*.db
+__pycache__/
+*.pyc
+.playwright/
+.DS_Store
+x_session/

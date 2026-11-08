@@ -1,0 +1,6 @@
+flask
+playwright
+python-dotenv
+httpx
+requests
+browser-cookie3

@@ -1,0 +1,16 @@
+{
+  "max_tweet_age_minutes": 15,
+  "scan_interval_seconds": 45,
+  "target_accounts": [
+    "blknoiz06",
+    "muststopmurad",
+    "theunipcs",
+    "lookonchain",
+    "WuBlockchain",
+    "0xScopescan",
+    "cobie",
+    "DarthPab",
+    "ansem",
+    "shawmakesmagic"
+  ]
+}

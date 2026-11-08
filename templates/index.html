@@ -1,0 +1,1305 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Block Ledger — Market Intelligence</title>
+    <!-- FAVICON MINIMALISTE NOIR & BLANC -->
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='8' fill='%230f172a'/%3E%3Crect x='4' y='4' width='56' height='56' rx='6' fill='none' stroke='%23ffffff' stroke-width='1.5' stroke-opacity='0.4'/%3E%3Ctext x='50%25' y='54%25' dominant-baseline='central' text-anchor='middle' font-family='Georgia, serif' font-size='28' font-weight='bold' fill='%23ffffff'%3EBL%3C/text%3E%3C/svg%3E"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Playfair+Display:ital,wght@0,600;0,800;1,400&display=swap"
+      rel="stylesheet"
+    />
+    <script
+      async
+      src="https://platform.twitter.com/widgets.js"
+      charset="utf-8"
+    ></script>
+    <style>
+      :root {
+        --ink: #0f172a;
+        --muted: #64748b;
+        --line: #e2e8f0;
+        --paper: #ffffff;
+        --subtle: #f8fafc;
+        --accent: #2563eb;
+        --green: #16a34a;
+        --red: #dc2626;
+        --gold: #d97706;
+        --ca-bg: #f1f5f9;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        background-color: var(--paper);
+        color: var(--ink);
+        font-family: "Inter", system-ui, sans-serif;
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .container {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 0 20px;
+      }
+
+      header {
+        text-align: center;
+        padding: 24px 0 16px 0;
+        border-bottom: 3px double var(--ink);
+      }
+
+      .header-meta {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        font-size: 0.72rem;
+        margin-bottom: 8px;
+      }
+
+      .header-links {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+
+      .header-icon-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        padding: 0;
+        border-radius: 4px;
+        border: 1px solid var(--line);
+        background: var(--subtle);
+        color: var(--muted);
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.15s ease;
+      }
+      .header-icon-btn:hover {
+        color: var(--ink);
+        border-color: var(--muted);
+        background: #e2e8f0;
+      }
+      .header-icon-btn svg {
+        width: 14px;
+        height: 14px;
+        fill: currentColor;
+      }
+
+      .journal-title {
+        font-family: "Playfair Display", Georgia, serif;
+        font-size: 3.2rem;
+        font-weight: 800;
+        letter-spacing: -2px;
+        margin: 0;
+        line-height: 1;
+      }
+
+      .journal-tagline {
+        font-family: "Playfair Display", Georgia, serif;
+        font-size: 0.95rem;
+        font-style: italic;
+        color: var(--muted);
+        margin: 8px 0 0 0;
+      }
+
+      .control-bar,
+      .public-bar {
+        background: var(--subtle);
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 10px 16px;
+        margin: 20px 0 16px 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+        font-size: 0.8rem;
+      }
+
+      .account-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        align-items: center;
+      }
+
+      .account-badge {
+        background: #fff;
+        border: 1px solid var(--line);
+        padding: 3px 8px;
+        border-radius: 4px;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .remove-btn {
+        color: var(--muted);
+        text-decoration: none;
+        font-weight: 700;
+      }
+      .remove-btn:hover {
+        color: var(--red);
+      }
+
+      .btn {
+        background: var(--ink);
+        color: #fff;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        cursor: pointer;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .btn:hover {
+        opacity: 0.85;
+      }
+      .btn-outline {
+        background: #fff;
+        color: var(--ink);
+        border: 1px solid var(--line);
+      }
+
+      .sub-nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-top: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
+        padding: 8px 0;
+        margin-bottom: 24px;
+        font-size: 0.75rem;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
+      .nav-filters {
+        display: flex;
+        gap: 16px;
+      }
+
+      .filter-btn {
+        color: var(--muted);
+        text-decoration: none;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        padding-bottom: 4px;
+      }
+      .filter-btn:hover,
+      .filter-btn.active {
+        color: var(--ink);
+        border-bottom: 2px solid var(--ink);
+      }
+
+      .search-box {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .search-input {
+        border: 1px solid var(--line);
+        padding: 4px 10px;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        width: 200px;
+        outline: none;
+        background: var(--subtle);
+      }
+      .search-input:focus {
+        border-color: var(--ink);
+        background: #fff;
+      }
+
+      .articles-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0;
+        margin-bottom: 80px;
+        border-top: 1px solid var(--line);
+        border-left: 1px solid var(--line);
+      }
+
+      @media (max-width: 992px) {
+        .articles-grid {
+          grid-template-columns: 1fr;
+          border-left: none;
+        }
+      }
+
+      .card {
+        padding: 20px 20px 24px 20px;
+        border-right: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        min-height: 380px;
+        background: #fff;
+      }
+
+      .meta {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.7rem;
+        color: var(--muted);
+        margin-bottom: 12px;
+        text-transform: uppercase;
+        font-weight: 600;
+      }
+      .meta .author {
+        color: var(--ink);
+        font-weight: 700;
+      }
+
+      .tweet-container {
+        margin-bottom: 16px;
+      }
+
+      .tweet-body {
+        font-family: "Playfair Display", Georgia, serif;
+        font-size: 1.05rem;
+        line-height: 1.45;
+        color: #1e293b;
+        margin: 0;
+        display: -webkit-box;
+        -webkit-line-clamp: 4;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        word-break: break-word;
+        cursor: pointer;
+      }
+
+      .read-more-btn {
+        background: none;
+        border: none;
+        padding: 6px 0 0 0;
+        color: var(--accent);
+        font-size: 0.75rem;
+        font-weight: 600;
+        cursor: pointer;
+        font-family: "Inter", sans-serif;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .market-ticket {
+        background: var(--subtle);
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 10px 12px;
+        margin-top: auto;
+        margin-bottom: 12px;
+      }
+      .ticket-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .ticket-name {
+        font-weight: 700;
+        font-size: 0.82rem;
+      }
+      .ticket-price {
+        font-family: "JetBrains Mono", monospace;
+        font-weight: 600;
+        font-size: 0.82rem;
+      }
+      .ticket-sub {
+        font-size: 0.72rem;
+        color: var(--muted);
+        margin-top: 4px;
+      }
+
+      .ca-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: var(--ca-bg);
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        padding: 4px 8px;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.7rem;
+        margin-bottom: 12px;
+      }
+
+      .ca-text {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 190px;
+      }
+
+      .copy-btn {
+        background: var(--ink);
+        color: #fff;
+        border: none;
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-size: 0.65rem;
+        cursor: pointer;
+        font-family: "Inter", sans-serif;
+        font-weight: 600;
+      }
+
+      .card-footer {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: 700;
+        padding-top: 12px;
+        border-top: 1px solid var(--line);
+      }
+      .card-footer a {
+        color: var(--ink);
+        text-decoration: none;
+      }
+      .chart-link {
+        color: var(--accent) !important;
+      }
+
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(15, 23, 42, 0.65);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        backdrop-filter: blur(4px);
+      }
+
+      .modal-box {
+        background: var(--paper);
+        border: 2px solid var(--ink);
+        border-radius: 8px;
+        padding: 28px;
+        max-width: 540px;
+        width: 90%;
+        max-height: 90vh;
+        overflow-y: auto;
+        position: relative;
+      }
+
+      .modal-close {
+        position: absolute;
+        top: 14px;
+        right: 18px;
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: var(--muted);
+      }
+
+      .voting-section {
+        background: var(--subtle);
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 16px;
+        margin-top: 16px;
+      }
+
+      .empty-state {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 80px 0;
+        color: var(--muted);
+        font-family: "Playfair Display", Georgia, serif;
+        font-style: italic;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <div class="header-meta">
+          <div class="header-links">
+            <!-- BOUTON LOGO SOLANA (SUPPORT / TIP) -->
+            <button
+              type="button"
+              onclick="openModal('tipModal')"
+              class="header-icon-btn"
+              title="Support with SOL"
+            >
+              <svg viewBox="0 0 397 311">
+                <path
+                  d="M64.6 237.9c2.4-2.4 5.7-3.8 9.2-3.8h317.4c5.8 0 8.7 7 4.6 11.1l-62.7 62.7c-2.4 2.4-5.7 3.8-9.2 3.8H6.5c-5.8 0-8.7-7-4.6-11.1l62.7-62.7zM64.6 3.8C67 1.4 70.3 0 73.8 0h317.4c5.8 0 8.7 7 4.6 11.1l-62.7 62.7c-2.4 2.4-5.7 3.8-9.2 3.8H6.5c-5.8 0-8.7-7-4.6-11.1L64.6 3.8zM333.1 120.1c-2.4-2.4-5.7-3.8-9.2-3.8H6.5c-5.8 0-8.7 7-4.6 11.1l62.7 62.7c2.4 2.4 5.7 3.8 9.2 3.8h317.4c5.8 0 8.7-7 4.6-11.1l-62.7-62.7z"
+                />
+              </svg>
+            </button>
+            <!-- LOGO DISCORD -->
+            <a
+              href="{{ discord_url }}"
+              target="_blank"
+              class="header-icon-btn"
+              title="Discord Community"
+            >
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994.021-.041.001-.09-.041-.106a13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.894.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.028zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"
+                />
+              </svg>
+            </a>
+            <!-- LOGO GITHUB -->
+            <a
+              href="{{ github_url }}"
+              target="_blank"
+              class="header-icon-btn"
+              title="GitHub Repository"
+            >
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"
+                />
+              </svg>
+            </a>
+          </div>
+        </div>
+        <h1 class="journal-title">The Block Ledger</h1>
+        <div class="journal-tagline">
+          Independent register of decentralized market movements and influencer
+          signals
+        </div>
+      </header>
+
+      {% if app_mode == 'personal' %}
+      <!-- BARRE DE CONTRÔLE LOCALE -->
+      <div class="control-bar">
+        <div class="account-tags">
+          <span
+            style="
+              font-weight: 700;
+              text-transform: uppercase;
+              font-size: 0.72rem;
+              color: var(--muted);
+            "
+            >Tracked Feeds:</span
+          >
+          {% for acc in accounts %}
+          <span class="account-badge">
+            @{{ acc }}
+            <a href="/remove-account/{{ acc }}" class="remove-btn">×</a>
+          </span>
+          {% endfor %}
+          <form
+            action="/add-account"
+            method="POST"
+            style="display: inline-flex; gap: 4px; margin-left: 6px"
+          >
+            <input
+              type="text"
+              name="account"
+              placeholder="handle..."
+              style="
+                border: 1px solid var(--line);
+                padding: 3px 6px;
+                border-radius: 3px;
+                font-size: 0.75rem;
+              "
+              required
+            />
+            <button type="submit" class="btn" style="padding: 3px 8px">
+              +
+            </button>
+          </form>
+        </div>
+
+        <div style="display: flex; gap: 8px; align-items: center">
+          <button
+            type="button"
+            onclick="openModal('authModal')"
+            class="btn btn-outline"
+          >
+            🔑 {{ 'Update X Auth' if is_authenticated else 'Connect X Session'
+            }}
+          </button>
+        </div>
+      </div>
+      {% else %}
+      <!-- BARRE OFFICIELLE PUBLIQUE -->
+      <div class="public-bar">
+        <div class="account-tags">
+          <span
+            style="
+              font-weight: 700;
+              text-transform: uppercase;
+              font-size: 0.72rem;
+              color: var(--muted);
+            "
+            >Official Pool:</span
+          >
+          {% for acc in accounts %}
+          <span
+            class="account-badge"
+            onclick="filterByAccount('{{ acc }}')"
+            style="cursor: pointer"
+            title="Filter by @{{ acc }}"
+            >@{{ acc }}</span
+          >
+          {% endfor %}
+        </div>
+        <div style="display: flex; gap: 8px">
+          <button
+            type="button"
+            onclick="openModal('votingModal')"
+            class="btn btn-outline"
+            style="font-size: 0.7rem; padding: 4px 8px"
+          >
+            🗳️ Propose & Vote
+          </button>
+          <a
+            href="{{ github_url }}"
+            target="_blank"
+            class="btn btn-outline"
+            style="font-size: 0.7rem; padding: 4px 8px"
+          >
+            ⚡ Deploy Your Own
+          </a>
+        </div>
+      </div>
+      {% endif %}
+
+      <div class="sub-nav">
+        <nav class="nav-filters">
+          <a
+            href="/?period=day"
+            class="filter-btn {{ 'active' if active_period == 'day' }}"
+            >Past 24H</a
+          >
+          <a
+            href="/?period=week"
+            class="filter-btn {{ 'active' if active_period == 'week' }}"
+            >Past 7 Days</a
+          >
+          <a
+            href="/?period=month"
+            class="filter-btn {{ 'active' if active_period == 'month' }}"
+            >Past 30 Days</a
+          >
+          <a
+            href="/?period=all"
+            class="filter-btn {{ 'active' if active_period == 'all' }}"
+            >All Records</a
+          >
+        </nav>
+        <div class="search-box">
+          <input
+            type="text"
+            id="liveSearchInput"
+            class="search-input"
+            placeholder="Search token, handle or keyword..."
+            oninput="handleSearch(this.value)"
+          />
+        </div>
+      </div>
+
+      <main class="articles-grid" id="signalsGrid">
+        {% if signals %} {% for s in signals %}
+        <article
+          class="card signal-card"
+          data-search="{{ (s[1] ~ ' ' ~ (s[3] or '') ~ ' ' ~ (s[4] or '') ~ ' ' ~ s[2] ~ ' ' ~ (s[5] or '')) | lower }}"
+        >
+          <div>
+            <div class="meta">
+              <span
+                class="author"
+                onclick="filterByAccount('{{ s[1] }}')"
+                style="
+                  cursor: pointer;
+                  text-decoration: underline;
+                  text-underline-offset: 3px;
+                "
+                title="Filter by @{{ s[1] }}"
+                >@{{ s[1] }}</span
+              >
+              <span>{{ s[0] | format_date(active_period) }}</span>
+            </div>
+            <div class="tweet-container">
+              <div
+                class="tweet-body"
+                onclick="openReaderModal({{ loop.index0 }})"
+              >
+                “{{ s[2] }}”
+              </div>
+              <button
+                type="button"
+                class="read-more-btn"
+                onclick="openReaderModal({{ loop.index0 }})"
+              >
+                View Original Tweet ↗
+              </button>
+            </div>
+          </div>
+
+          <div>
+            {% if s[3] or s[4] or s[6] %}
+            <div class="market-ticket">
+              <div class="ticket-row">
+                <span class="ticket-name"
+                  >{{ s[3] or 'Detected Token' }} {% if s[4] %}(${{ s[4] }}){%
+                  endif %}</span
+                >
+                <span class="ticket-price">${{ s[6] or 'N/A' }}</span>
+              </div>
+              <div class="ticket-sub">
+                <span
+                  >Market Cap:
+                  <b
+                    >${{ "{:,.0f}".format(s[7]|float) if s[7] and
+                    s[7].replace('.','',1).isdigit() else (s[7] or 'N/A') }}</b
+                  ></span
+                >
+              </div>
+            </div>
+            {% endif %} {% if s[5] %}
+            <div class="ca-container">
+              <span class="ca-text">{{ s[5] }}</span>
+              <button
+                type="button"
+                class="copy-btn"
+                onclick="copyToClipboard('{{ s[5] }}', this)"
+              >
+                Copy CA
+              </button>
+            </div>
+            {% endif %}
+
+            <div class="card-footer">
+              {% if s[8] %}
+              <a href="{{ s[8] }}" target="_blank" class="chart-link"
+                >DexScreener Chart ↗</a
+              >
+              {% else %}
+              <span></span>
+              {% endif %}
+              <a href="{{ s[9] }}" target="_blank">Direct Post ↗</a>
+            </div>
+          </div>
+        </article>
+        {% endfor %} {% else %}
+        <div class="empty-state">
+          <h3>No dispatches recorded yet</h3>
+          <p>Feeds will appear here automatically upon radar execution.</p>
+        </div>
+        {% endif %}
+      </main>
+    </div>
+
+    <!-- 1. MODALE TWITTER READER -->
+    <div
+      id="readerModal"
+      class="modal-overlay"
+      onclick="closeOnOutside(event, 'readerModal')"
+    >
+      <div class="modal-box">
+        <button
+          type="button"
+          class="modal-close"
+          onclick="closeModal('readerModal')"
+        >
+          &times;
+        </button>
+        <div id="tweetEmbedTarget" class="tweet-embed-container"></div>
+        <div id="modalMarketTicket"></div>
+        <div class="card-footer" style="margin-top: 16px; padding-top: 12px">
+          <span id="modalChartLink"></span>
+          <a id="modalSourceLink" href="#" target="_blank"
+            >Open directly on X ↗</a
+          >
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. MODALE TIP SOLANA -->
+    <div
+      id="tipModal"
+      class="modal-overlay"
+      onclick="closeOnOutside(event, 'tipModal')"
+    >
+      <div class="modal-box">
+        <button
+          type="button"
+          class="modal-close"
+          onclick="closeModal('tipModal')"
+        >
+          &times;
+        </button>
+        <h2
+          style="
+            font-family: &quot;Playfair Display&quot;, Georgia, serif;
+            margin-top: 0;
+          "
+        >
+          Support The Ledger
+        </h2>
+        <p style="font-size: 0.85rem; color: var(--muted); line-height: 1.5">
+          The Block Ledger is open-source, independent and ad-free. Support
+          infrastructure nodes and compute:
+        </p>
+
+        <div style="margin: 16px 0">
+          <button
+            type="button"
+            onclick="sendDirectTip(0.05)"
+            class="btn"
+            style="
+              width: 100%;
+              justify-content: center;
+              padding: 10px;
+              font-size: 0.85rem;
+              background: #512da8;
+              margin-bottom: 8px;
+            "
+          >
+            ⚡ Tip 0.05 SOL via Phantom
+          </button>
+          <div style="display: flex; gap: 8px">
+            <button
+              type="button"
+              onclick="sendDirectTip(0.01)"
+              class="btn btn-outline"
+              style="flex: 1; justify-content: center; font-size: 0.75rem"
+            >
+              0.01 SOL
+            </button>
+            <button
+              type="button"
+              onclick="sendDirectTip(0.1)"
+              class="btn btn-outline"
+              style="flex: 1; justify-content: center; font-size: 0.75rem"
+            >
+              0.1 SOL
+            </button>
+            <button
+              type="button"
+              onclick="sendDirectTip(0.5)"
+              class="btn btn-outline"
+              style="flex: 1; justify-content: center; font-size: 0.75rem"
+            >
+              0.5 SOL
+            </button>
+          </div>
+        </div>
+
+        <div
+          style="
+            text-align: center;
+            font-size: 0.72rem;
+            color: var(--muted);
+            margin: 12px 0 6px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+          "
+        >
+          — Or Manual Transfer —
+        </div>
+
+        <div
+          class="ca-container"
+          style="padding: 8px 10px; margin-bottom: 14px"
+        >
+          <span class="ca-text" style="max-width: 280px; font-weight: 600"
+            >{{ donate_sol }}</span
+          >
+          <button
+            type="button"
+            class="copy-btn"
+            onclick="copyToClipboard('{{ donate_sol }}', this)"
+            style="padding: 4px 10px"
+          >
+            Copy Address
+          </button>
+        </div>
+
+        <p style="font-size: 0.75rem; color: var(--muted); margin: 0">
+          Donators receive the <b>@Subscriber</b> role with double voting weight
+          and distinctive recognition on Discord.
+        </p>
+      </div>
+    </div>
+
+    <!-- 3. MODALE PROPOSITION ET VOTE MENSUEL -->
+    <div
+      id="votingModal"
+      class="modal-overlay"
+      onclick="closeOnOutside(event, 'votingModal')"
+    >
+      <div class="modal-box">
+        <button
+          type="button"
+          class="modal-close"
+          onclick="closeModal('votingModal')"
+        >
+          &times;
+        </button>
+        <h2
+          style="
+            font-family: &quot;Playfair Display&quot;, Georgia, serif;
+            margin-top: 0;
+          "
+        >
+          Community Pool Voting
+        </h2>
+        <p style="font-size: 0.85rem; color: var(--muted); line-height: 1.5">
+          Every month, the community decides which influencer or whale is added
+          to the official radar.
+        </p>
+
+        <div class="voting-section">
+          <div
+            style="
+              font-size: 0.8rem;
+              font-weight: 700;
+              text-transform: uppercase;
+              margin-bottom: 8px;
+              color: var(--ink);
+            "
+          >
+            💡 Propose a New Handle
+          </div>
+          <p
+            style="font-size: 0.78rem; color: var(--muted); margin: 0 0 10px 0"
+          >
+            Type any X handle to submit it directly to the Discord channel:
+          </p>
+          <div style="display: flex; gap: 6px">
+            <input
+              type="text"
+              id="proposedHandleInput"
+              placeholder="@username..."
+              style="
+                flex: 1;
+                border: 1px solid var(--line);
+                padding: 6px 10px;
+                border-radius: 4px;
+                font-size: 0.8rem;
+                background: #fff;
+                outline: none;
+              "
+            />
+            <button
+              type="button"
+              id="submitProposalBtn"
+              onclick="submitProposalToDiscord()"
+              class="btn"
+              style="padding: 6px 14px"
+            >
+              Submit ↗
+            </button>
+          </div>
+        </div>
+
+        <div
+          style="
+            margin-top: 20px;
+            font-size: 0.75rem;
+            color: var(--muted);
+            line-height: 1.5;
+          "
+        >
+          ℹ️ <b>Voting Rules:</b> All members have 1 vote per proposal. Donators
+          with the <b>@Subscriber</b> role hold <b>2x voting power</b> on
+          Discord.
+        </div>
+
+        <div style="margin-top: 16px; text-align: right">
+          <a
+            href="{{ discord_url }}"
+            target="_blank"
+            class="btn btn-outline"
+            style="font-size: 0.75rem"
+          >
+            Go to Discord Community 💬
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. MODALE AUTH LOCALE -->
+    {% if app_mode == 'personal' %}
+    <div
+      id="authModal"
+      class="modal-overlay"
+      onclick="closeOnOutside(event, 'authModal')"
+    >
+      <div class="modal-box">
+        <button
+          type="button"
+          class="modal-close"
+          onclick="closeModal('authModal')"
+        >
+          &times;
+        </button>
+        <h2
+          style="
+            font-family: &quot;Playfair Display&quot;, Georgia, serif;
+            margin-top: 0;
+          "
+        >
+          Connect X Session
+        </h2>
+        <p style="font-size: 0.85rem; color: var(--muted); line-height: 1.5">
+          The ledger uses your local browser cookies to index public feeds. No
+          credentials ever leave your computer.
+        </p>
+        <div
+          style="
+            background: var(--subtle);
+            border: 1px solid var(--line);
+            border-radius: 4px;
+            padding: 12px;
+            margin-bottom: 16px;
+            font-size: 0.78rem;
+          "
+        >
+          ℹ️ Make sure you are logged in to <code>x.com</code> on your default
+          browser.
+        </div>
+        <div style="display: flex; justify-content: flex-end; gap: 10px">
+          <button
+            type="button"
+            onclick="closeModal('authModal')"
+            class="btn btn-outline"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            onclick="syncBrowserSession()"
+            id="syncBtn"
+            class="btn"
+          >
+            Authorize & Auto-Sync
+          </button>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+    <script>
+                  const DONATE_ADDRESS = "{{ donate_sol }}";
+
+                  let SIGNALS_DATA = [
+                      {% for s in signals %}
+                      {
+                          date: "{{ s[0] }}",
+                          formatted_date: "{{ s[0] | format_date(active_period) }}",
+                          author: "@{{ s[1] }}",
+                          text: {{ s[2] | tojson }},
+                          name: {{ (s[3] or '') | tojson }},
+                          symbol: {{ (s[4] or '') | tojson }},
+                          ca: {{ (s[5] or '') | tojson }},
+                          price: {{ (s[6] or 'N/A') | tojson }},
+                          mcap: {{ ("${:,.0f}".format(s[7]|float) if s[7] and s[7].replace('.','',1).isdigit() else (s[7] or 'N/A')) | tojson }},
+                          chartUrl: {{ (s[8] or '') | tojson }},
+                          tweetUrl: {{ (s[9] or '#') | tojson }}
+                      }{% if not loop.last %},{% endif %}
+                      {% endfor %}
+                  ];
+
+            function filterByAccount(handle) {
+          const cleanHandle = handle.replace('@', '').trim();
+          const searchInput = document.getElementById('liveSearchInput');
+          if (searchInput) {
+              searchInput.value = cleanHandle;
+              handleSearch(cleanHandle);
+              searchInput.focus();
+          }
+      }
+
+                  function handleSearch(query) {
+                      const term = query.toLowerCase().trim();
+                      const cards = document.querySelectorAll('.signal-card');
+                      cards.forEach(card => {
+                          const searchData = card.getAttribute('data-search') || '';
+                          card.style.display = searchData.includes(term) ? 'flex' : 'none';
+                      });
+                  }
+
+                  function copyToClipboard(text, btnElement) {
+                      if (!text) return;
+                      navigator.clipboard.writeText(text).then(() => {
+                          const originalText = btnElement.innerText;
+                          btnElement.innerText = 'Copied!';
+                          btnElement.style.background = '#16a34a';
+                          setTimeout(() => {
+                              btnElement.innerText = originalText;
+                              btnElement.style.background = 'var(--ink)';
+                          }, 1800);
+                      });
+                  }
+
+                  function openModal(modalId) {
+                      const el = document.getElementById(modalId);
+                      if (el) el.style.display = 'flex';
+                  }
+
+                  function closeModal(modalId) {
+                      const el = document.getElementById(modalId);
+                      if (el) el.style.display = 'none';
+                  }
+
+                  function closeOnOutside(e, modalId) {
+                      if (e.target.id === modalId) {
+                          closeModal(modalId);
+                      }
+                  }
+
+                  async function submitProposalToDiscord() {
+                      const input = document.getElementById('proposedHandleInput');
+                      const handle = input?.value.trim();
+
+                      if (!handle) {
+                          alert("Please enter a valid Twitter handle (e.g. @ansem).");
+                          return;
+                      }
+
+                      const btn = document.getElementById('submitProposalBtn');
+                      const originalText = btn.innerText;
+                      btn.innerText = "Sending...";
+                      btn.disabled = true;
+
+                      try {
+                          const res = await fetch('/api/submit-proposal', {
+                              method: 'POST',
+                              headers: { 'Content-Type': 'application/json' },
+                              body: JSON.stringify({ handle: handle })
+                          });
+
+                          const data = await res.json();
+
+                          if (res.ok && data.success) {
+                              alert(`🚀 Success! @${handle.replace('@','')} has been submitted to Discord for community voting.`);
+                              input.value = "";
+                              closeModal('votingModal');
+                          } else {
+                              alert("⚠️ " + (data.message || "Failed to send proposal."));
+                          }
+                      } catch (err) {
+                          alert("❌ Network error sending proposal to Discord.");
+                      } finally {
+                          btn.innerText = originalText;
+                          btn.disabled = false;
+                      }
+                  }
+
+                  function openReaderModal(index) {
+                      const item = SIGNALS_DATA[index];
+                      if (!item) return;
+
+                      const embedTarget = document.getElementById('tweetEmbedTarget');
+                      embedTarget.innerHTML = '';
+                      document.getElementById('modalSourceLink').href = item.tweetUrl;
+
+                      if (item.tweetUrl && item.tweetUrl.includes('/status/')) {
+                          const tweetId = item.tweetUrl.split('/status/')[1].split('?')[0];
+                          if (window.twttr && window.twttr.widgets) {
+                              window.twttr.widgets.createTweet(tweetId, embedTarget, {
+                                  conversation: 'none',
+                                  theme: 'light'
+                              });
+                          } else {
+                              embedTarget.innerHTML = `<blockquote class="twitter-tweet"><a href="${item.tweetUrl}"></a></blockquote>`;
+                          }
+                      } else {
+                          embedTarget.innerHTML = `<p style="font-family: Georgia, serif; font-size: 1.1rem; line-height: 1.5;">“${item.text}”</p>`;
+                      }
+
+                      const ticketContainer = document.getElementById('modalMarketTicket');
+                      if (item.name || item.symbol || item.price !== 'N/A') {
+                          ticketContainer.innerHTML = `
+                              <div class="market-ticket" style="margin-top: 12px;">
+                                  <div class="ticket-row">
+                                      <span class="ticket-name">${item.name} (${item.symbol})</span>
+                                      <span class="ticket-price">$${item.price}</span>
+                                  </div>
+                                  <div class="ticket-sub" style="font-size: 0.78rem; margin-top: 4px;">
+                                      <span>Market Cap: <b>${item.mcap}</b></span>
+                                  </div>
+                              </div>
+                          `;
+                      } else {
+                          ticketContainer.innerHTML = '';
+                      }
+
+                      const chartSpan = document.getElementById('modalChartLink');
+                      if (item.chartUrl) {
+                          chartSpan.innerHTML = `<a href="${item.chartUrl}" target="_blank" class="chart-link">DexScreener Chart ↗</a>`;
+                      } else {
+                          chartSpan.innerHTML = '';
+                      }
+
+                      openModal('readerModal');
+                  }
+
+                  async function sendDirectTip(solAmount) {
+                      if (!DONATE_ADDRESS) {
+                          alert("Please configure DONATE_SOL_ADDRESS in your .env file.");
+                          return;
+                      }
+
+                      navigator.clipboard.writeText(DONATE_ADDRESS);
+                      const isPhantomInstalled = window.phantom?.solana?.isPhantom || window.solana?.isPhantom;
+
+                      if (isPhantomInstalled) {
+                          window.open(`https://solscan.io/account/${DONATE_ADDRESS}`, '_blank');
+                          alert(`✅ Address copied!\nAmount: ${solAmount} SOL\nPaste the address directly into your Phantom extension.`);
+                      } else {
+                          window.location.href = `solana:${DONATE_ADDRESS}?amount=${solAmount}&label=The%20Block%20Ledger`;
+                          setTimeout(() => {
+                              alert(`📋 Address copied to clipboard!\nAmount: ${solAmount} SOL`);
+                          }, 800);
+                      }
+                  }
+
+                  const CURRENT_PERIOD = "{{ active_period }}";
+
+                  async function pollLiveSignals() {
+                      try {
+                          const res = await fetch(`/api/signals?period=${CURRENT_PERIOD}`);
+                          if (!res.ok) return;
+
+                          const freshSignals = await res.json();
+                          if (freshSignals && freshSignals.length > 0) {
+                              if (freshSignals.length !== SIGNALS_DATA.length || freshSignals[0]?.tweet_url !== SIGNALS_DATA[0]?.tweetUrl) {
+                                  SIGNALS_DATA = freshSignals.map(s => ({
+                                      date: s.date,
+                                      formatted_date: s.formatted_date,
+                                      author: `@${s.account}`,
+                                      text: s.tweet_text,
+                                      name: s.token_name,
+                                      symbol: s.token_symbol,
+                                      ca: s.contract_address,
+                                      price: s.price_usd,
+                                      mcap: s.market_cap !== 'N/A' && !isNaN(s.market_cap) ? `$${Number(s.market_cap).toLocaleString()}` : s.market_cap,
+                                      chartUrl: s.chart_url,
+                                      tweetUrl: s.tweet_url
+                                  }));
+
+                                  renderGrid(SIGNALS_DATA);
+                              }
+                          }
+                      } catch (err) {
+                          console.error("Auto-sync error:", err);
+                      }
+                  }
+
+                  function renderGrid(signals) {
+                      const grid = document.getElementById('signalsGrid');
+                      if (!grid) return;
+
+                      const searchTerm = (document.getElementById('liveSearchInput')?.value || '').toLowerCase().trim();
+
+                      grid.innerHTML = signals.map((s, idx) => {
+                          const searchData = `${s.author} ${s.name} ${s.symbol} ${s.text} ${s.ca}`.toLowerCase();
+                          const isHidden = searchTerm && !searchData.includes(searchTerm) ? 'style="display:none;"' : '';
+
+                          const ticketHtml = (s.name || s.symbol || s.price !== 'N/A') ? `
+                              <div class="market-ticket">
+                                  <div class="ticket-row">
+                                      <span class="ticket-name">${s.name || 'Detected Token'} ${s.symbol ? `($${s.symbol})` : ''}</span>
+                                      <span class="ticket-price">$${s.price}</span>
+                                  </div>
+                                  <div class="ticket-sub">
+                                      <span>Market Cap: <b>${s.mcap}</b></span>
+                                  </div>
+                              </div>
+                          ` : '';
+
+                          const caHtml = s.ca ? `
+                              <div class="ca-container">
+                                  <span class="ca-text">${s.ca}</span>
+                                  <button type="button" class="copy-btn" onclick="copyToClipboard('${s.ca}', this)">Copy CA</button>
+                              </div>
+                          ` : '';
+
+                          const chartHtml = s.chartUrl ? `<a href="${s.chartUrl}" target="_blank" class="chart-link">DexScreener Chart ↗</a>` : '<span></span>';
+
+                          return `
+                              <article class="card signal-card" data-search="${searchData}" ${isHidden}>
+                                  <div>
+                                      <div class="meta">
+                                      <span class="author" onclick="filterByAccount('${s.author}')" style="cursor: pointer; text-decoration: underline; text-underline-offset: 3px;" title="Filter by ${s.author}">${s.author}</span>                                    <span>${s.formatted_date}</span>
+                                      </div>
+                                      <div class="tweet-container">
+                                          <div class="tweet-body" onclick="openReaderModal(${idx})">“${s.text}”</div>
+                                          <button type="button" class="read-more-btn" onclick="openReaderModal(${idx})">
+                                              View Original Tweet ↗
+                                          </button>
+                                      </div>
+                                  </div>
+                                  <div>
+                                      ${ticketHtml}
+                                      ${caHtml}
+                                      <div class="card-footer">
+                                          ${chartHtml}
+                                          <a href="${s.tweetUrl}" target="_blank">Direct Post ↗</a>
+                                      </div>
+                                  </div>
+                              </article>
+                          `;
+                      }).join('');
+                  }
+
+                  setInterval(pollLiveSignals, 35000);
+
+                  async function syncBrowserSession() {
+                      const btn = document.getElementById('syncBtn');
+                      btn.innerText = 'Syncing...';
+                      btn.disabled = true;
+
+                      try {
+                          const res = await fetch('/api/auth/sync-browser', { method: 'POST' });
+                          const data = await res.json();
+                          if (res.ok) {
+                              alert('✅ ' + data.message);
+                              window.location.reload();
+                          } else {
+                              alert('⚠️ ' + data.message);
+                          }
+                      } catch (e) {
+                          alert('❌ Error synchronizing session.');
+                      } finally {
+                          btn.innerText = 'Authorize & Auto-Sync';
+                          btn.disabled = false;
+                          closeModal('authModal');
+                      }
+                  }
+    </script>
+  </body>
+</html>
